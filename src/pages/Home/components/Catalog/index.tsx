@@ -1,7 +1,10 @@
+import { useContext } from 'react'
 import { CatalogItemCard } from '../../../../components/CatalogItemCard'
+import { CoffeeDeliveryContext } from '../../../../context/CoffeeDeliveryContext'
 import { CatalogContainer, ListTitle, CatalogItems } from './styles'
-import { coffeeData } from '../../../../data/coffees'
+
 export function Catalog() {
+  const { coffeeData } = useContext(CoffeeDeliveryContext)
   return (
     <CatalogContainer>
       <ListTitle>Nossos Cafés</ListTitle>

@@ -19,8 +19,31 @@ import {
 
 import { MapPin, CurrencyDollar, CreditCard, Bank, Money } from 'phosphor-react'
 import { CartItemCard } from '../../components/CartItemCard'
+import { useContext, useEffect, useState } from 'react'
+import { CoffeeDeliveryContext } from '../../context/CoffeeDeliveryContext'
+import { number } from 'zod'
+
+interface Coffee {
+  id: number
+  image: string
+  tags: string[]
+  title: string
+  info: string
+  price: number
+}
 
 export function Cart() {
+  const { cart, retrieveCoffeeData } = useContext(CoffeeDeliveryContext)
+  const [price, setPrice] = useState('0')
+  useEffect(() => {
+    let totalPrice = 0
+    cart.map((cartItem) => {
+      const itemPrice = retrieveCoffeeData(cartItem.id).coffee?.price
+      if (itemPrice) return (totalPrice += cartItem.amount * itemPrice)
+      return totalPrice
+    })
+    setPrice(totalPrice.toFixed(2))
+  }, [cart, retrieveCoffeeData])
   return (
     <CartContainer>
       <UserDataSection>
@@ -78,14 +101,18 @@ export function Cart() {
       <CheckoutSection>
         <AreaTitle>Cafés Selecionados</AreaTitle>
         <ProductsSection>
-          <CartItemCard />
-          <Separator />
-          <CartItemCard />
-          <Separator />
+          {cart.map((item) => {
+            return (
+              <>
+                <CartItemCard key={item.id} coffeeId={item.id} />
+                <Separator />
+              </>
+            )
+          })}
 
           <PaymentInfo>
             <span>Total de itens</span>
-            <span>R$ 19,90</span>
+            <span>R$ {price}</span>
           </PaymentInfo>
           <PaymentInfo>
             <span>Entrega</span>
@@ -93,7 +120,7 @@ export function Cart() {
           </PaymentInfo>
           <TotalPayment>
             <span>Total</span>
-            <span>R$ 33,99</span>
+            <span>R$ {(parseFloat(price) + 3.5).toFixed(2)}</span>
           </TotalPayment>
           <CheckoutButton>Confirmar Pedido</CheckoutButton>
         </ProductsSection>

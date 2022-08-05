@@ -1,5 +1,7 @@
 import { ShoppingCart } from 'phosphor-react'
-import { useState } from 'react'
+import { useContext, useState } from 'react'
+import { CoffeeDeliveryContext } from '../../context/CoffeeDeliveryContext'
+import { ItemIcon } from '../../pages/Success/styles'
 import { AmountInput } from '../AmountInput'
 import {
   CatalogItemCardContainer,
@@ -27,8 +29,12 @@ interface Coffee {
 interface CoffeeProps {
   coffee: Coffee
 }
+
 export function CatalogItemCard({ coffee }: CoffeeProps) {
-  const [amount, setAmount] = useState(0)
+  const { cart, addToCart } = useContext(CoffeeDeliveryContext)
+  const isCoffeeOnCart = cart.find((item) => item.id === coffee.id)
+  const coffeeAmount = isCoffeeOnCart ? isCoffeeOnCart.amount : 0
+  const [amount, setAmount] = useState(coffeeAmount)
 
   function handleAdd() {
     setAmount((state) => state + 1)
@@ -38,6 +44,10 @@ export function CatalogItemCard({ coffee }: CoffeeProps) {
     if (amount >= 1) {
       setAmount((state) => state - 1)
     }
+  }
+
+  function handleAddToCart() {
+    addToCart(coffee.id, amount)
   }
 
   return (
@@ -56,7 +66,7 @@ export function CatalogItemCard({ coffee }: CoffeeProps) {
         </Price>
         <CartForm>
           <AmountInput onAdd={handleAdd} onSub={handleSub} amount={amount} />
-          <AddToCartButton>
+          <AddToCartButton onClick={handleAddToCart}>
             <ShoppingCart weight="fill" size={22} />
           </AddToCartButton>
         </CartForm>

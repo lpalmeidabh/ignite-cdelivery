@@ -87,9 +87,14 @@ export const PaymentItem = styled.button`
   background-color: ${(props) => props.theme['base-button']};
   border-radius: 6px;
   border: 0;
-
+  transition: 0.4s;
   &:hover {
     background-color: ${(props) => props.theme['base-hover']};
+  }
+  &:disabled {
+    outline: 0;
+    box-shadow: 0 0 0 1px ${(props) => props.theme.purple};
+    background-color: ${(props) => props.theme['purple-light']};
   }
 `
 

@@ -32,9 +32,44 @@ interface Coffee {
   price: number
 }
 
+interface PaymentMethod {
+  credit: boolean
+  debit: boolean
+  money: boolean
+}
+
 export function Cart() {
   const { cart, retrieveCoffeeData } = useContext(CoffeeDeliveryContext)
   const [price, setPrice] = useState('0')
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>({
+    credit: false,
+    debit: false,
+    money: false,
+  })
+
+  function changePaymentMethod(method: string) {
+    const newPaymentMethod: PaymentMethod = {
+      credit: false,
+      debit: false,
+      money: false,
+    }
+    switch (method) {
+      case 'credit':
+        newPaymentMethod.credit = true
+        break
+      case 'debit':
+        newPaymentMethod.debit = true
+        break
+      case 'money':
+        newPaymentMethod.money = true
+        break
+      default:
+        break
+    }
+
+    setPaymentMethod(newPaymentMethod)
+  }
+
   useEffect(() => {
     let totalPrice = 0
     cart.map((cartItem) => {
@@ -83,15 +118,24 @@ export function Cart() {
             </HeaderTitle>
           </SectionHeader>
           <PaymentOptions>
-            <PaymentItem>
+            <PaymentItem
+              disabled={paymentMethod.credit}
+              onClick={() => changePaymentMethod('credit')}
+            >
               <CreditCard size={16} />
               Cartão de Crédito
             </PaymentItem>
-            <PaymentItem>
+            <PaymentItem
+              disabled={paymentMethod.debit}
+              onClick={() => changePaymentMethod('debit')}
+            >
               <Bank size={16} />
               Cartão de Débito
             </PaymentItem>
-            <PaymentItem>
+            <PaymentItem
+              disabled={paymentMethod.money}
+              onClick={() => changePaymentMethod('money')}
+            >
               <Money size={16} />
               Dinheiro
             </PaymentItem>
